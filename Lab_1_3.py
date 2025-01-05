@@ -8,50 +8,59 @@
 7. Проверить что появилась надпись Impressive
 8. Проверить что кнопка No недоступна"""
 
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-import time
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-# Настройка драйвера
+# Инициализация веб-драйвера
 driver = webdriver.Chrome()
-driver.implicitly_wait(10)
 
 try:
-    # 1. Перейти на страницу https://demoqa.com/
+    # 1. Перейти на страницу
     driver.get("https://demoqa.com/")
     driver.maximize_window()
 
     # 2. Перейти в раздел 'Elements'
-    elements_section = driver.find_element(By.CSS_SELECTOR, ".card-body h5")
-    elements_section.click()
+    WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, "//div[@class='card-body']//h5[text()='Elements']"))
+    ).click()
 
     # 3. Выбрать пункт 'Radio Button'
-    radio_button_option = driver.find_element(By.CSS_SELECTOR, "span[title='Radio Button']")
-    radio_button_option.click()
+    WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[text()='Radio Button']"))
+    ).click()
 
     # 4. Выбрать Yes
-    yes_button = driver.find_element(By.CSS_SELECTOR, "label[for='yesRadio']")
-    yes_button.click()
+    WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, "//label[@for='yesRadio']"))
+    ).click()
 
     # 5. Проверить, что появилась надпись Yes
-    result_text = driver.find_element(By.CLASS_NAME, "text-success").text
-    assert result_text == "Yes", "Надпись 'Yes' не отображается"
+    yes_message = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, "//span[text()='Yes']"))
+    )
+    assert yes_message.is_displayed(), "Сообщение 'Yes' не отображается!"
+    print("Тест: сообщение 'Yes' отображается.")
 
     # 6. Выбрать Impressive
-    impressive_button = driver.find_element(By.CSS_SELECTOR, "label[for='impressiveRadio']")
-    impressive_button.click()
+    WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, "//label[@for='impressiveRadio']"))
+    ).click()
 
     # 7. Проверить, что появилась надпись Impressive
-    result_text = driver.find_element(By.CLASS_NAME, "text-success").text
-    assert result_text == "Impressive", "Надпись 'Impressive' не отображается"
+    impressive_message = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, "//span[text()='Impressive']"))
+    )
+    assert impressive_message.is_displayed(), "Сообщение 'Impressive' не отображается!"
+    print("Тест: сообщение 'Impressive' отображается.")
 
     # 8. Проверить, что кнопка No недоступна
-    no_radio_button = driver.find_element(By.ID, "noRadio")
-    assert not no_radio_button.is_enabled(), "Кнопка 'No' доступна, хотя должна быть отключена"
-
-    print("Тест успешно выполнен!")
+    no_button = driver.find_element(By.XPATH, "//input[@id='noRadio']")
+    assert not no_button.is_enabled(), "Кнопка 'No' доступна, но должна быть недоступна!"
+    print("Тест: кнопка 'No' недоступна.")
 
 finally:
-    # Закрыть браузер
+    # Закрытие браузера
     driver.quit()
-
