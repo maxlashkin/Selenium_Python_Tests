@@ -10,6 +10,7 @@
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+import time
 
 # Настройка драйвера
 driver = webdriver.Chrome()
@@ -21,41 +22,36 @@ try:
     driver.maximize_window()
 
     # 2. Перейти в раздел 'Elements'
-    elements_section = driver.find_element(By.XPATH, "//h5[text()='Elements']")
+    elements_section = driver.find_element(By.CSS_SELECTOR, ".card-body h5")
     elements_section.click()
 
-    # 3. Выбрать пункт 'Check Box'
-    check_box_option = driver.find_element(By.XPATH, "//span[text()='Check Box']")
-    check_box_option.click()
+    # 3. Выбрать пункт 'Radio Button'
+    radio_button_option = driver.find_element(By.CSS_SELECTOR, "span[title='Radio Button']")
+    radio_button_option.click()
 
-    # 4. Нажать на +
-    expand_button = driver.find_element(By.XPATH, "//button[@title='Expand all']")
-    expand_button.click()
+    # 4. Выбрать Yes
+    yes_button = driver.find_element(By.CSS_SELECTOR, "label[for='yesRadio']")
+    yes_button.click()
 
-    # 5. Поставить чек боксы на пункты: Notes, Veu, Private
-    notes_checkbox = driver.find_element(By.XPATH, "//label[@for='tree-node-notes']")
-    veu_checkbox = driver.find_element(By.XPATH, "//label[@for='tree-node-veu']")
-    private_checkbox = driver.find_element(By.XPATH, "//label[@for='tree-node-private']")
+    # 5. Проверить, что появилась надпись Yes
+    result_text = driver.find_element(By.CLASS_NAME, "text-success").text
+    assert result_text == "Yes", "Надпись 'Yes' не отображается"
 
-    notes_checkbox.click()
-    veu_checkbox.click()
-    private_checkbox.click()
+    # 6. Выбрать Impressive
+    impressive_button = driver.find_element(By.CSS_SELECTOR, "label[for='impressiveRadio']")
+    impressive_button.click()
 
-    # Проверяем, что чекбоксы отмечены
-    notes_input = driver.find_element(By.XPATH, "//input[@id='tree-node-notes']")
-    veu_input = driver.find_element(By.XPATH, "//input[@id='tree-node-veu']")
-    private_input = driver.find_element(By.XPATH, "//input[@id='tree-node-private']")
+    # 7. Проверить, что появилась надпись Impressive
+    result_text = driver.find_element(By.CLASS_NAME, "text-success").text
+    assert result_text == "Impressive", "Надпись 'Impressive' не отображается"
 
-    assert notes_input.is_selected(), "Notes не выбран"
-    assert veu_input.is_selected(), "Veu не выбран"
-    assert private_input.is_selected(), "Private не выбран"
-
-    # 6. Нажать -
-    collapse_button = driver.find_element(By.XPATH, "//button[@title='Collapse all']")
-    collapse_button.click()
+    # 8. Проверить, что кнопка No недоступна
+    no_radio_button = driver.find_element(By.ID, "noRadio")
+    assert not no_radio_button.is_enabled(), "Кнопка 'No' доступна, хотя должна быть отключена"
 
     print("Тест успешно выполнен!")
 
 finally:
     # Закрыть браузер
     driver.quit()
+
