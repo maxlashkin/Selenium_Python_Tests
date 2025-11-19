@@ -57,20 +57,14 @@ prefs = {
     # полностью отключаем менеджер паролей
     "credentials_enable_service": False,
     "profile.password_manager_enabled": False,
+    "profile.password_manager_leak_detection": False,
     # чтобы не лезли нотификации
     "profile.default_content_setting_values.notifications": 2,
     # доп. отключение безопасного просмотра в тестовой среде
     "safebrowsing.enabled": False,
 }
 
-#chrome_options.add_experimental_option("prefs", prefs)
-chrome_options.add_experimental_option("prefs", {
-    "profile.password_manager_leak_detection": False
-})
-
-# вырубаем связанные фичи через флаги
-#chrome_options.add_argument("--disable-features=PasswordLeakDetection,PasswordManagerOnboarding,PasswordManagerUI,SafetyCheckChromium")
-#chrome_options.add_argument("--password-store=basic")
+chrome_options.add_experimental_option("prefs", prefs)
 
 driver = webdriver.Chrome(options=chrome_options)
 
